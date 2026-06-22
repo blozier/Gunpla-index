@@ -1,0 +1,47 @@
+name: Sync Build Logs from Notion
+
+on:
+  schedule:
+    - cron: "0 14 * * 1"      # Mondays ~6–7am Pacific (14:00 UTC)
+  workflow_dispatch:           # adds a "Run workflow" button for on-demand syncs
+
+permissions:
+  contents: write              # required so the Action can commit the synced files
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install deps
+        working-directory: scripts/sync-buildlogs
+        run: npm install
+
+      - name: Sync from Notion
+        working-directory: scripts/sync-buildlogs
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          # Pins the data source for this multi-source workspace (2025-09-03 API).
+          # Not secret. Remove to let the script auto-resolve from the database.
+          NOTION_DATA_SOURCE_ID: "82b3e630-22f6-40ee-9886-572972208ea0"
+        run: node sync.mjs
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A _logs assets/logs
+          if git diff --staged --quiet; then
+            echo "No build-log changes."
+          else
+            git commit -m "Sync build logs from Notion"
+            git push
+          fi
