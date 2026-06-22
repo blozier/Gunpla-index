@@ -1,0 +1,19 @@
+# =====================================================================
+#  ADD THESE KEYS TO YOUR REPO'S  _config.yml
+#  - If you DON'T have a _config.yml yet, create one with this content.
+#  - If you DO, merge these top-level keys into it (don't duplicate keys
+#    you already have like `title:` or `theme:`).
+#  - After committing, GitHub Pages rebuilds in ~1 min.
+# =====================================================================
+
+collections:
+  logs:
+    output: true
+    permalink: /logs/:name/      # _logs/foo.md  ->  /logs/foo/
+
+defaults:
+  - scope:
+      path: ""
+      type: logs
+    values:
+      layout: buildlog            # every _logs entry uses _layouts/buildlog.html

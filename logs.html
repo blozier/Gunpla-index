@@ -1,0 +1,72 @@
+---
+title: Build Logs
+permalink: /logs/
+---
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build Logs — Gunpla Build Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Saira+Condensed:wght@600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{--paper:#ece8e0;--paper-2:#e3ded4;--ink:#1a1816;--ink-soft:#4a453d;--ink-faint:#8a8276;--rule:#c9c2b4;
+    --orange:#e0590f;--orange-ink:#b8470a;--eg:#1f9d63;--hg:#2f7fc4;--rg:#0f9aa6;--mg:#bb8e16;--pg:#cf4226;--fm:#6f5fc4;--sd:#cc5c93;
+    --done:#2f7d4f;--wip:#bd7a1e;--backlog:#8a8276}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif}
+  .wrap{max-width:900px;margin:0 auto;padding:24px 22px 80px}
+  a{text-decoration:none;color:inherit}
+  .topbar{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--rule);padding-bottom:12px;margin-bottom:22px}
+  .back{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+  .back:hover{color:var(--orange-ink)}
+  h1{font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:38px;margin:.1em 0 .5em;letter-spacing:.01em}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+  .card{border:1px solid var(--rule);background:var(--paper);padding:14px 15px;transition:box-shadow .15s,transform .15s}
+  .card:hover{box-shadow:0 4px 14px rgba(0,0,0,.10);transform:translateY(-1px)}
+  .row{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+  .gb{font-family:'Space Mono',monospace;font-weight:700;font-size:10px;letter-spacing:.07em;color:#fff;padding:2px 7px}
+  .g-EG{background:var(--eg)}.g-HG{background:var(--hg)}.g-RG{background:var(--rg)}.g-MG{background:var(--mg)}
+  .g-PG{background:var(--pg)}.g-FM{background:var(--fm)}.g-SD{background:var(--sd)}
+  .pill{font-family:'Space Mono',monospace;font-weight:700;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#fff;padding:2px 7px}
+  .pill.done{background:var(--done)}.pill.wip{background:var(--wip)}.pill.backlog{background:var(--backlog)}
+  .kit{font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:21px;line-height:1.05;margin:2px 0 8px}
+  .meta{font-family:'Space Mono',monospace;font-size:11px;color:var(--ink-faint);letter-spacing:.03em}
+  .empty{color:var(--ink-faint);font-style:italic}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a class="back" href="{{ '/' | relative_url }}">&larr; Build Index</a>
+    <span class="back">Build Logs</span>
+  </div>
+  <h1>Build Logs</h1>
+  {% assign logs = site.logs | sort: 'started' | reverse %}
+  {% if logs.size == 0 %}
+    <p class="empty">No logs yet. Copy <code>_logs/TEMPLATE.md</code> to start one.</p>
+  {% else %}
+  <div class="grid">
+    {% for log in logs %}
+    <a class="card" href="{{ log.url | relative_url }}">
+      <div class="row">
+        {% if log.grade %}<span class="gb g-{{ log.grade }}">{{ log.grade }}</span>{% endif %}
+        {% if log.status == 'done' %}<span class="pill done">&#10003; Built</span>
+        {% elsif log.status == 'wip' %}<span class="pill wip">In progress</span>
+        {% elsif log.status == 'backlog' %}<span class="pill backlog">Backlog</span>{% endif %}
+      </div>
+      <div class="kit">{{ log.kit }}</div>
+      <div class="meta">
+        {% if log.rating %}{{ log.rating }}/10{% endif %}
+        {% if log.build_time %}&middot; {{ log.build_time }}{% endif %}
+        {% if log.finished %}&middot; {{ log.finished | date: "%b %Y" }}{% endif %}
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+</body>
+</html>
