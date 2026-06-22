@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ page.kit }} — Build Log</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Saira+Condensed:wght@600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#ece8e0; --paper-2:#e3ded4;
+    --ink:#1a1816; --ink-soft:#4a453d; --ink-faint:#8a8276; --rule:#c9c2b4;
+    --orange:#e0590f; --orange-ink:#b8470a;
+    --eg:#1f9d63; --hg:#2f7fc4; --rg:#0f9aa6; --mg:#bb8e16; --pg:#cf4226; --fm:#6f5fc4; --sd:#cc5c93;
+    --done:#2f7d4f; --wip:#bd7a1e; --backlog:#8a8276;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.6}
+  .wrap{max-width:880px;margin:0 auto;padding:24px 22px 80px}
+  a{color:var(--orange-ink)}
+  /* top bar */
+  .topbar{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--rule);padding-bottom:12px;margin-bottom:26px}
+  .back{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;color:var(--ink-soft)}
+  .back:hover{color:var(--orange-ink)}
+  .sitetag{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)}
+  /* header */
+  .eyebrow{display:flex;gap:10px;align-items:center;margin-bottom:6px;flex-wrap:wrap}
+  .gb{font-family:'Space Mono',monospace;font-weight:700;font-size:11px;letter-spacing:.08em;color:#fff;padding:3px 8px}
+  .g-EG{background:var(--eg)}.g-HG{background:var(--hg)}.g-RG{background:var(--rg)}
+  .g-MG{background:var(--mg)}.g-PG{background:var(--pg)}.g-FM{background:var(--fm)}.g-SD{background:var(--sd)}
+  .scale{font-family:'Space Mono',monospace;font-size:12px;color:var(--ink-faint)}
+  .pill{font-family:'Space Mono',monospace;font-weight:700;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#fff;padding:3px 9px}
+  .pill.done{background:var(--done)}.pill.wip{background:var(--wip)}.pill.backlog{background:var(--backlog)}
+  h1{font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.02;margin:.1em 0 .35em;letter-spacing:.01em}
+  .cover{width:100%;height:auto;border:1px solid var(--rule);margin:8px 0 26px;display:block}
+  /* meta stats */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:0 0 30px}
+  .stat{background:var(--paper);padding:12px 14px}
+  .stat .lab{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:4px}
+  .stat .val{font-family:'Saira Condensed',sans-serif;font-weight:600;font-size:20px}
+  .dots{display:flex;gap:4px;margin-top:3px}
+  .dot{width:14px;height:14px;border:1.5px solid var(--ink-soft)}
+  .dot.on{background:var(--ink-soft)}
+  .ratebar{height:9px;background:var(--paper-2);border:1px solid var(--rule);margin-top:8px;position:relative}
+  .ratebar i{position:absolute;inset:0 auto 0 0;background:var(--orange);display:block}
+  /* sections */
+  h2{font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:22px;letter-spacing:.02em;color:var(--orange-ink);margin:34px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--rule)}
+  table{width:100%;border-collapse:collapse;font-size:14.5px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+  th{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-faint);background:var(--paper-2)}
+  tbody tr:nth-child(even){background:var(--paper-2)}
+  ul.decals{margin:0;padding-left:20px}
+  ul.decals li{margin:4px 0}
+  .notes{font-size:16px}
+  .notes h3{font-family:'Saira Condensed',sans-serif;font-size:18px;margin:22px 0 6px}
+  .notes img{max-width:100%;height:auto;border:1px solid var(--rule)}
+  /* gallery */
+  .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;margin-top:6px}
+  .gallery a{display:block;line-height:0}
+  .gallery img{width:100%;height:190px;object-fit:cover;border:1px solid var(--rule);transition:opacity .15s}
+  .gallery a:hover img{opacity:.85}
+  .empty{color:var(--ink-faint);font-style:italic;font-size:14px}
+  footer{margin-top:50px;border-top:1px solid var(--rule);padding-top:14px;font-family:'Space Mono',monospace;font-size:11px;color:var(--ink-faint);letter-spacing:.05em}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <a class="back" href="{{ '/' | relative_url }}">&larr; Build Index</a>
+    <span class="sitetag">Build Log</span>
+  </div>
+
+  <div class="eyebrow">
+    {% if page.grade %}<span class="gb g-{{ page.grade }}">{{ page.grade }}</span>{% endif %}
+    {% if page.scale %}<span class="scale">{{ page.scale }}</span>{% endif %}
+    {% if page.status == 'done' %}<span class="pill done">&#10003; Built</span>
+    {% elsif page.status == 'wip' %}<span class="pill wip">In progress</span>
+    {% elsif page.status == 'backlog' %}<span class="pill backlog">Backlog</span>{% endif %}
+  </div>
+
+  <h1>{{ page.kit }}</h1>
+
+  {% if page.cover %}<img class="cover" src="{{ page.cover | relative_url }}" alt="{{ page.kit }}" onerror="this.style.display='none'">{% endif %}
+
+  <div class="stats">
+    {% if page.build_time %}<div class="stat"><div class="lab">Build Time</div><div class="val">{{ page.build_time }}</div></div>{% endif %}
+    {% if page.difficulty %}<div class="stat"><div class="lab">Difficulty</div><div class="dots">{% for i in (1..5) %}<span class="dot {% if i <= page.difficulty %}on{% endif %}"></span>{% endfor %}</div></div>{% endif %}
+    {% if page.rating %}<div class="stat"><div class="lab">Final Rating</div><div class="val">{{ page.rating }} / 10</div><div class="ratebar"><i style="width:{{ page.rating | times: 10 }}%"></i></div></div>{% endif %}
+    {% if page.started %}<div class="stat"><div class="lab">Started</div><div class="val">{{ page.started | date: "%b %-d, %Y" }}</div></div>{% endif %}
+    {% if page.finished %}<div class="stat"><div class="lab">Finished</div><div class="val">{{ page.finished | date: "%b %-d, %Y" }}</div></div>{% endif %}
+  </div>
+
+  {% if page.paints and page.paints.size > 0 %}
+  <h2>Paints Used</h2>
+  <table>
+    <thead><tr><th>Color</th><th>Brand / Line</th><th>Where</th></tr></thead>
+    <tbody>
+      {% for p in page.paints %}<tr><td>{{ p.name }}</td><td>{{ p.brand }}</td><td>{{ p.use }}</td></tr>{% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+
+  {% if page.decals and page.decals.size > 0 %}
+  <h2>Decals Used</h2>
+  <ul class="decals">{% for d in page.decals %}<li>{{ d }}</li>{% endfor %}</ul>
+  {% endif %}
+
+  <h2>Build Notes</h2>
+  <div class="notes">
+    {{ content }}
+  </div>
+
+  {% if page.gallery and page.gallery.size > 0 %}
+  <h2>Photo Gallery</h2>
+  <div class="gallery">
+    {% for img in page.gallery %}<a href="{{ img | relative_url }}" target="_blank" rel="noopener"><img src="{{ img | relative_url }}" alt="" loading="lazy" onerror="this.parentNode.style.display='none'"></a>{% endfor %}
+  </div>
+  {% endif %}
+
+  <footer>Gunpla Build Index &middot; logged {{ page.finished | date: "%Y" | default: "—" }}</footer>
+
+</div>
+</body>
+</html>
